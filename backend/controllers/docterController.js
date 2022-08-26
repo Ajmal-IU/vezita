@@ -503,7 +503,6 @@ exports.addEstablishment = catchAsyncErrors(async (req, res, next) => {
 
   const establishmentDetails = await Establishment.create({
     ...establishment,
-    docter: req.docter._id,
   });
 
   res.status(201).json({ msg: "success", establishmentDetails });
