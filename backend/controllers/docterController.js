@@ -494,7 +494,6 @@ exports.addEstablishment = catchAsyncErrors(async (req, res, next) => {
 
   const isChecked = await Establishment.find({
     $and: [
-      { _id: req.docter._id },
       { establishmentName: req.body.establishmentName },
     ],
   });
