@@ -462,12 +462,16 @@ exports.getDocterProfileById = catchAsyncErrors(async (req, res, next) => {
 
 //Add Education (Docter)
 exports.addEducation = catchAsyncErrors(async (req, res, next) => {
-  const { qualification } = req.body;
+  const qualification = {
+    degree:req.body.degree,
+    institute:req.body.institute,
+    year:req.body.year,
+    experience:req.body.experience
+  }
 
-  qualification.forEach(async (item) => {
-    await DocterQualification.create({ ...item, docter: req.docter._id });
-  });
-  res.status(201).json({ msg: "success" });
+  const qualificationDetails = await DocterQualification.create({ ...qualification, docter: req.user._id });
+
+  res.status(201).json({ msg: "success", qualificationDetails });
 });
 
 //Update Education
@@ -503,6 +507,7 @@ exports.addEstablishment = catchAsyncErrors(async (req, res, next) => {
 
   const establishmentDetails = await Establishment.create({
     ...establishment,
+    docter:req.user._id
   });
 
   res.status(201).json({ msg: "success", establishmentDetails });
@@ -521,18 +526,17 @@ exports.updateEstablishment = catchAsyncErrors(async (req, res, next) => {
 });
 
 //Add Medical Details
-exports.addDocterMedicalRegistrationDetails = catchAsyncErrors(
-  async (req, res, next) => {
+exports.addDocterMedicalRegistrationDetails = catchAsyncErrors(async (req, res, next) => {
     const data = {
       registrationNumber: req.body.registrationNumber,
       councilName: req.body.councilName,
       year: req.body.year,
-      docter: req.docter._id,
+      docter: req.user._id,
     };
 
-    await DocterMedicalRegistration.create(data);
+    const medicalRegistrationDetails = await DocterMedicalRegistration.create(data);
 
-    res.status(201).json({ msg: "success" });
+    res.status(201).json({ msg: "success",medicalRegistrationDetails });
   }
 );
 
@@ -558,12 +562,12 @@ exports.addDocterExperience = catchAsyncErrors(async (req, res, next) => {
     role: req.body.role,
     city: req.body.city,
     establishmentName: req.body.establishmentName,
-    docter: req.docter._id,
+    docter: req.user._id,
   };
 
-  const de = await DocterExperience.create(data);
+  const experienceDetails = await DocterExperience.create(data);
 
-  res.status(201).json({ msg: "success", data: de });
+  res.status(201).json({ msg: "success", data: experienceDetails });
 });
 
 //Update Docter Experience
