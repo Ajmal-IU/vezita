@@ -1,6 +1,7 @@
 const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 
+const Slot = require("../models/docterSlotModel")
 const Booking = require("../models/bookingModel");
 const DoctorService = require("../models/docterServiceModel");
 const mongoose = require("mongoose");
@@ -25,25 +26,35 @@ function formatDate(date) {
   return [year, month, day].join("-");
 }
 
+
+
 //create booking
 exports.createBooking = catchAsyncErrors(async (req, res) => {
-  const { patient, bookingType, doctorLocation, doctorId } = req.body;
+  const user = req.user
 
-  if (bookingType === "in-clinic" && !doctorLocation) {
-    return res.status(500).json({
-      status: false,
-      msg: "Please pass in clinic appointment.",
-    });
+  let {slotId,patientId,bookingType,totalAmount} = req.body;
+
+
+  // console.log(booking.patient)
+  let patientObj = await Patient.findById(booking.patient);
+  let service = await DoctorService.findById(booking.service);
+  let serviceAvailability = await ServiceAvailability.findById(
+    serviceAvailability
+  );
+  let slot = await Slot.findById(slotId);
+  if(!slot){
+      return next(new AppError("No slot found with this slotId",404));
   }
 
-  if (bookingType === "video" && !doctorId) {
-    return res.status(400).json({
-      status: false,
-      msg: "Please pass video appointment",
-    });
-  }
+  const booking = await Booking.create({
+    slotId:slotId,
+    bookingType:bookingType,
+    totalAmount:totalAmount,
+    user:user._id,
+    docter:slot.docterId,
+    patient:patientId,
+  });
 
-  const booking = await Booking.create(req.body);
   if (bookingType === "in-clinic") {
     booking.displayMessage1 = "Booking place";
     booking.displayMessage2 = "Waiting for doctor approval";
@@ -54,12 +65,12 @@ exports.createBooking = catchAsyncErrors(async (req, res) => {
     await booking.save();
   }
 
-  // console.log(booking.patient)
-  let patientObj = await Patient.findById(booking.patient);
-  let service = await DoctorService.findById(booking.service);
-  let serviceAvailability = await ServiceAvailability.findById(
-    booking.serviceAvailability
-  );
+  // // console.log(booking.patient)
+  // let patientObj = await Patient.findById(booking.patient);
+  // let service = await DoctorService.findById(booking.service);
+  // let serviceAvailability = await ServiceAvailability.findById(
+  //   booking.serviceAvailability
+  // );
 
   // let found = serviceAvailability.fixedPriceAvailability.filter(
   //   (serviceAvailId) =>

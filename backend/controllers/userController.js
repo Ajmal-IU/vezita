@@ -1,19 +1,89 @@
 const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const { sendEmail } = require("../utils/sendEmail");
+const APIFeatures = require("../utils/apiFeatures");
 const crypto = require("crypto");
 // const referralCodeGenerator = require("referral-code-generator");
 
 //models
 // const UserWallet = require("../models/userWallet");
 const User = require("../models/userModel");
+const UserTemporary = require("../models/userTemporary");
+const { validationResult } = require('express-validator');
+
+//register
+exports.createTemporaryUser =catchAsyncErrors(async(req,res,next) =>{
+
+      const {name,email,uid} = req.body;
+      console.log(req.body);
+      console.log(req.query);
+      let isNewUser = false;
+      let user = await User.findOne({email:email,uid:uid});
+  
+      if(user){
+          return res.status(200).json({
+              status:false,
+              msg:'user already exist'
+          });
+      }  
+      const checkUser = await UserTemporary.findOne({email:email});
+
+      if(checkUser){
+          const tempUser = await UserTemporary.findByIdAndUpdate(checkUser._id,{
+              uid:uid,
+              name:name
+          });
+      }else{
+          const tempUser = await UserTemporary.create({
+              email:email,
+              uid:uid,
+              name:name
+          });
+      }
+      
+      return res.status(200).json({
+          status:true,
+          msg: "temp user add successfully",
+      });
+});
 
 //on-boarding
 exports.onBoarding = catchAsyncErrors(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      // const error = new Error('Validation failed.');
+      return res.status(422).json({
+          status:false,
+          errors:errors.array()
+      })
+  }
+  const {email,avatar} = req.body;
+ 
   const user = req.user;
 
-  let userUpdate = await User.findByIdAndUpdate(user._id,{new:true});
 
+    let tempUser = await UserTemporary.findOne({email:email});
+    if(tempUser){
+      let name=tempUser.name
+
+    
+      userUpdate = await User.findByIdAndUpdate(user._id,{
+          email:email,
+          name:name,
+          avatar:avatar,
+      });
+
+      await UserTemporary.findByIdAndDelete(tempUser._id);
+    }else{
+      userUpdate = await User.findByIdAndUpdate(user._id,{new:true});
+    }
+    if(!userUpdate){
+      return res.status(422).json({
+        status:false,
+        errors:errors.array()
+    })
+    }
+  
   res.status(200).json({
     status:true,
     message:"User onboarded.",

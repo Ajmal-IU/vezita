@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
   {
+    user:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User",
+      required:true
+    },
     slotId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "DocterSlot",
@@ -15,7 +20,7 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       enum: ["in-clinic", "video"],
     },
-    doctorId: {
+    doctor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Docter",
     },
@@ -34,10 +39,6 @@ const bookingSchema = new mongoose.Schema(
     patient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Patient",
-    },
-    availabilityId: {
-      type: String,
-      required: true,
     },
     bookedBy: {
       type: mongoose.Schema.Types.ObjectId,

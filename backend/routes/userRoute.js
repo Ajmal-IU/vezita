@@ -7,11 +7,14 @@ const {
   getUserDetails,
   getAllUser,
   onBoarding,
+  createTemporaryUser,
 } = require("../controllers/userController");
 
 const router = express.Router();
 
 router.route("/onboarding").post(requiresAuth,onBoarding);
+
+router.post('/register',createTemporaryUser);
 
 router.route("/login").post(requiresAuth,loginUser);
 
