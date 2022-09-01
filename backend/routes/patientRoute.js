@@ -30,6 +30,6 @@ router
 
 router
   .route("/me")
-  .get(getUserPatients);
+  .get(requiresAuth,restrictTo('user'),getUserPatients);
 
 module.exports = router;

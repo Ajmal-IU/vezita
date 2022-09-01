@@ -57,20 +57,20 @@ exports.onBoarding = catchAsyncErrors(async (req, res) => {
           errors:errors.array()
       })
   }
-  const {email,avatar} = req.body;
+  const {email,photoUrl} = req.body;
  
   const user = req.user;
 
 
     let tempUser = await UserTemporary.findOne({email:email});
     if(tempUser){
-      let name=tempUser.name
+      let displayName=tempUser.name
 
     
       userUpdate = await User.findByIdAndUpdate(user._id,{
           email:email,
-          name:name,
-          avatar:avatar,
+          name:displayName,
+          avatar:photoUrl,
       });
 
       await UserTemporary.findByIdAndDelete(tempUser._id);

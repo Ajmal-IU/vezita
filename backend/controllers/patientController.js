@@ -37,9 +37,9 @@ exports.addPatientMedical = catchAsyncErrors(async (req, res, next) => {
     _id: mongoose.Types.ObjectId(req.body.patientId),
   });
 
-  if (!patientId) return next(new ErrorHander("Invalid PatientId", 404));
-
-  if (patientId.user !== req.user._id)
+  if (!patientId) return next(new ErrorHander("Invalid PatientId", 404))
+  
+  if (JSON.stringify(patientId.user)!=JSON.stringify(req.user._id))
     return next(
       new ErrorHander("You don't have permission to access this resource", 400)
     );
