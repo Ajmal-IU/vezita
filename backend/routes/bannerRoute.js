@@ -40,7 +40,17 @@ router
 router
   .route("/admin/all")
   .get(
+    requiresAuth,
+    restrictTo('admin'),
     bannerController.getDocterBannerForAdmin
   );
+
+router
+.route("/user/all")
+.get(
+  requiresAuth,
+  restrictTo('user'),
+  bannerController.getBannerForUser
+);
 
 module.exports = router;

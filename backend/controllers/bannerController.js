@@ -5,11 +5,8 @@ const Banner = require("../models/bannerModel");
 
 exports.uploadBanner = catchAsyncErrors(async (req, res, next) => {
   const data = {
-    docter: req.body.docter._id,
-    bannerImage: {
-      url: req.file.key,
-      public_id: req.file.key,
-    },
+    docter: req.user._id,
+    bannerImage:req.body.bannerImage,
     discountPercentage: req.body.discountPercentage,
     bannerExpire: req.body.date,
   };
@@ -52,7 +49,7 @@ exports.RejectBannerAdmin = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.getDocterBanner = catchAsyncErrors(async (req, res, next) => {
-  const uploadedBanners = await Docter.find({ docter: req.docter._id }).select(
+  const uploadedBanners = await Docter.find({ docter: req.user._id }).select(
     "+reasonForRejection"
   );
 
@@ -63,10 +60,42 @@ exports.getDocterBanner = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.getDocterBannerForAdmin = catchAsyncErrors(async (req, res, next) => {
-  const uploadedBanners = await Docter.find({}).select("+reasonForRejection");
+  const uploadedBanners = await Banner.find({}).select("+reasonForRejection");
 
   res.status(200).json({
     uploadedBanners,
     success: true,
   });
 });
+
+exports.getBannerForUser = catchAsyncErrors(async (req, res, next) => {
+  const uploadedBanners = await Banner.find({status:"Approved"})
+
+  res.status(200).json({
+    uploadedBanners,
+    success: true,
+  });
+});
+
+// let users;
+// let search = req.query.search; 
+// if(search){
+//   let QStringName = searchQuery(search,"name");
+//   let QStringEmail = searchQuery(search,"email");
+//   users = await User.find({$or:QStringName.concat(QStringEmail)});
+//   return res.status(200).json({
+//       status:true,
+//       results:users.length,
+//       message:"all users",
+//       users
+//   })
+// }
+// users = new APIFeatures(User.find(),req.query).filter();
+// const doc = await users.query;
+
+// res.status(200).json({
+//     status:true,
+//     results:doc.length,
+//     message:"all users",
+//     users:doc
+// })

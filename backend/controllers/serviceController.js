@@ -15,8 +15,8 @@ exports.addSpecialization = catchAsyncErrors(async (req, res, next) => {
   if (sp)
     return next(new ErrorHander(`${specialization} is already registered`));
 
-  await Specialization.create({ name: specialization });
-  res.status(201).json({ msg: "success" });
+  const newSpecialization = await Specialization.create({ name: specialization });
+  res.status(201).json({ msg: "success", specialization:newSpecialization});
 });
 
 exports.updateSpecialization = catchAsyncErrors(async (req, res, next) => {
@@ -94,17 +94,22 @@ exports.deleteDocterSpecialization = catchAsyncErrors(
 exports.addServices = catchAsyncErrors(async (req, res, next) => {
   const { name: service, specializationId } = req.body;
 
+  const specialization = await Specialization.findOne({
+    _id: mongoose.Types.ObjectId(specializationId),
+  });
+
+  if (!specialization) return next(new ErrorHander(`specialization is not available`));
   const sp = await Service.findOne({
     name: service,
   });
 
   if (sp) return next(new ErrorHander(`${service} is already registered`));
 
-  await Service.create({
+  const newService = await Service.create({
     name: service,
     specialization: mongoose.Types.ObjectId(specializationId),
   });
-  res.status(201).json({ msg: "success" });
+  res.status(201).json({ msg: "success",service:newService });
 });
 
 //Get Service (Docter)

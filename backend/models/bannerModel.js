@@ -11,13 +11,15 @@ const bannerSchema = new mongoose.Schema({
       required: true,
     },
   },
+  
   discountPercentage: {
     type: Number,
     required: true,
   },
+
   docter: {
     type: mongoose.Types.ObjectId,
-    ref: "Docter",
+    ref: "User",
     required: true,
   },
   status: {
