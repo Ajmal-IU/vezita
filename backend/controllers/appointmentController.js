@@ -1,4 +1,6 @@
 const fs = require("fs");
+
+const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const { google } = require("googleapis");
 const requirementValidator = require("../utils/requirementValidator");
 const appointmentUtility = require("../utils/appointmentUtility");
@@ -167,7 +169,3 @@ exports.checkAvailability = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({ message: "Slot available" });
 });
 
-module.exports = {
-  getAvailTimeslots,
-  checkAvailability
-};

@@ -14,12 +14,6 @@ router
     appointment.addServiceAvailability
   );
 
-router
-  .route("/get-result")
-  .get(
-    appointment.getResult
-  );
-
   router
   .route("/get-availtimeslot")
   .get(
