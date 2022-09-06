@@ -31,7 +31,7 @@ app.get("/",(req,res) =>{
 const user = require("./routes/userRoute");
 const docter = require("./routes/docterRoute");
 const review = require("./routes/reviewRoute");
-const appointmentRoute = require("./routes/appointmentRoute");
+// const appointmentRoute = require("./routes/appointmentRoute");
 const service = require("./routes/serviceRoute");
 const coupon = require("./routes/couponRoute");
 const payment = require("./routes/paymentRoute");
@@ -50,7 +50,7 @@ const analytics = require("./routes/analyticsRoute");
 app.use("/api/v1/user", user);
 app.use("/api/v1/docter", docter);
 app.use("/api/v1/review", review);
-app.use("/api/v1/appointment", appointmentRoute);
+// app.use("/api/v1/appointment", appointmentRoute);
 app.use("/api/v1/service", service);
 app.use("/api/v1/coupon", coupon);
 app.use("/api/v1/payment", payment);
