@@ -25,27 +25,37 @@ exports.ApproveBannerAdmin = catchAsyncErrors(async (req, res, next) => {
   if (!banner)
     return next(new ErrorHandler("Banner Id Invalid Not Found", 404));
 
+  if(banner.status=="Approved"){
+    return next(new ErrorHandler("Banner is already approved", 404));
+  }
+
   banner.status = "Approved";
 
   banner.save();
 
-  res.status(200).json({ success: true });
+  res.status(200).json({ success: true,banner: banner });
 });
 
 exports.RejectBannerAdmin = catchAsyncErrors(async (req, res, next) => {
-  if (req.body.reason)
-    return next(new ErrorHandler("Enter the reason for rejection", 400));
-
   const banner = await Banner.findById(req.params.id);
 
   if (!banner)
-    return next(new ErrorHandler("Banner Id Invalid Not Found", 404));
+  return next(new ErrorHandler("Banner Id Invalid Not Found", 404));
+
+  if(banner.status=="Rejected"){
+    return next(new ErrorHandler("Banner is already Rejected", 404));
+  }
+
+  if (!req.body.reason)
+    return next(new ErrorHandler("Enter the reason for rejection", 400));
 
   banner.status = "Rejected";
 
   banner.reasonForRejection = req.body.reason;
 
-  res.status(200).json({ success: true });
+  banner.save();
+
+  res.status(200).json({ success: true, banner: banner });
 });
 
 exports.getDocterBanner = catchAsyncErrors(async (req, res, next) => {
